@@ -1,3 +1,10 @@
+from src.logger import configurar_logger
+import sqlite3
+
+
+logger = configurar_logger()
+
+
 def cargar_datos(df, path):
     """
     Guarda un DataFrame en un archivo CSV.
@@ -10,4 +17,46 @@ def cargar_datos(df, path):
         None
     """
 
-    df.to_csv(path, index=False)
+    try:
+        df.to_csv(path, index=False)
+        logger.info(f"Datos cargados correctamente en {path}")
+
+    except Exception as e:
+        logger.error(f"Error al cargar los datos en {path}: {e}")
+        raise
+
+
+def cargar_datos_sqlite(df, path, tabla):
+    """
+    Guarda un DataFrame en una base de datos SQLite.
+
+    Args:
+        df (pandas.DataFrame): DataFrame que se desea guardar.
+        path (str): Ruta de la base de datos SQLite.
+        tabla (str): Nombre de la tabla.
+
+    Returns:
+        None
+    """
+
+    try:
+        conexion = sqlite3.connect(path)
+
+        df.to_sql(
+            tabla,
+            conexion,
+            if_exists="replace",
+            index=False
+        )
+
+        conexion.close()
+
+        logger.info(
+            f"Datos cargados correctamente en SQLite: {path}, tabla: {tabla}"
+        )
+
+    except Exception as e:
+        logger.error(
+            f"Error al cargar los datos en SQLite: {e}"
+        )
+        raise
