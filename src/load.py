@@ -40,16 +40,13 @@ def cargar_datos_sqlite(df, path, tabla):
     """
 
     try:
-        conexion = sqlite3.connect(path)
-
-        df.to_sql(
-            tabla,
-            conexion,
-            if_exists="replace",
-            index=False
-        )
-
-        conexion.close()
+        with sqlite3.connect(path) as conexion:
+            df.to_sql(
+                tabla,
+                conexion,
+                if_exists="replace",
+                index=False
+            )
 
         logger.info(
             f"Datos cargados correctamente en SQLite: {path}, tabla: {tabla}"
