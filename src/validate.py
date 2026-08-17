@@ -1,3 +1,8 @@
+from src.logger import  retornar_logger
+
+
+logger = retornar_logger("validate.py")
+
 def existencia_nulos(df):
     """
     Verifica que el DataFrame no contenga valores nulos.
@@ -11,18 +16,6 @@ def existencia_nulos(df):
 
     return not df.isnull().values.any()
 
-def checkear_duplicados(df):
-    """
-        Verifica que el DataFrame no contenga valores duplicados.
-
-        Args:
-            df (pandas.DataFrame): DataFrame a validar.
-
-        Returns:
-            bool: True si no existen valores duplicados, False en caso contrario.
-    """
-
-    return not df.duplicated().any()
 
 def validar_columnas(df, columnas_esperadas):
     """
@@ -81,7 +74,10 @@ def validar_datos(df, columnas_esperadas, tipos_esperados):
     """
 
     if not existencia_nulos(df):
+        logger.error("Se detectaron valores nulos.")
         raise ValueError("El DataFrame contiene valores nulos.")
+    else:
+        logger.info("Validacion de valores nulos superada correctamente")
 
     columnas_faltantes = validar_columnas(
         df,
@@ -89,9 +85,12 @@ def validar_datos(df, columnas_esperadas, tipos_esperados):
     )
 
     if columnas_faltantes:
+        logger.error("Se detectaron columnas faltantes.")
         raise ValueError(
             f"Faltan las siguientes columnas: {columnas_faltantes}"
         )
+    else:
+        logger.info("Validacion de columnas superada correctamente")
 
     tipos_incorrectos = validar_tipo_de_datos(
         df,
@@ -99,6 +98,9 @@ def validar_datos(df, columnas_esperadas, tipos_esperados):
     )
 
     if tipos_incorrectos:
+        logger.error("Se detectaron tipos de datos incorrectos.")
         raise ValueError(
             f"Tipos de datos incorrectos: {tipos_incorrectos}"
         )
+    else:
+        logger.info("Validacion de tipos de datos superada correctamente")

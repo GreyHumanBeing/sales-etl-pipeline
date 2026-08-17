@@ -1,3 +1,7 @@
+from src.logger import retornar_logger
+
+logger = retornar_logger("transform.py")
+
 def normalizar_columnas(df):
     """
         Convierte los nombres de las columnas a snake_case.
@@ -15,6 +19,7 @@ def normalizar_columnas(df):
         columnas.append(nuevo_nombre)
 
     df.columns = columnas
+    logger.info("Columnas normalizadas.")
     return df
 
 
@@ -30,7 +35,7 @@ def convertir_tipos(df):
     """
 
     df["postal_code"] = df["postal_code"].astype(str)
-
+    logger.info("Tipos de datos convertidos.")
     return df
 
 def calcular_profit_margin(df):
@@ -42,10 +47,18 @@ def calcular_profit_margin(df):
 
     Returns:
         pandas.DataFrame: DataFrame con la columna profit_margin.
+
+    Raises:
+        ValueError: Si al menos una fila contiene sales = 0(Valor incorrecto)
+
+
     """
+    if (df['sales']==0).any():
+        logger.error("La columna sales contiene al menos un valor = 0. Deteniendo Pipeline.. ")
+        raise ValueError("Error de valor en columna sales.")
 
     df["profit_margin"] = df["profit"] / df["sales"]
-
+    logger.info("Columna profit_margin creada.")
     return df
 
 def transformar_datos(df):
@@ -62,6 +75,6 @@ def transformar_datos(df):
     df = normalizar_columnas(df)
     df = convertir_tipos(df)
     df = calcular_profit_margin(df)
-
+    logger.info("Todas las transformaciones fueron realizadas correctamente.")
     return df
 

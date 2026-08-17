@@ -2,9 +2,10 @@ from src.extract import extraer_datos
 from src.transform import transformar_datos
 from src.load import cargar_datos, cargar_datos_sqlite
 from src.validate import validar_datos
-from src.logger import configurar_logger
+from src.logger import configurar_logger, retornar_logger
 
-logger = configurar_logger()
+configurar_logger()
+logger = retornar_logger("main.py")
 
 # Rutas de entrada y salida
 database_path = "database/sales.db"
@@ -52,27 +53,20 @@ tipos_esperados = {
 
 
 try:
+    logger.info("Iniciando Pipeline...")
     #1. Extract
-    logger.info("Iniciando pipeline")
     df = extraer_datos(path)
-    logger.info(f"Datos extraídos correctamente: {len(df)} filas")
 
     #2. Transform
-    logger.info("Transformando datos")
     df_clean = transformar_datos(df)
-    logger.info(f"Transformaciones aplicadas: {len(df_clean)} filas")
-
 
     #3. Validate
-
-    logger.info("Validando datos.")
     validar_datos(df_clean, columnas_esperadas, tipos_esperados)
-    logger.info("Todas las validaciones fueron superadas correctamente")
 
     #4. Load
-    logger.info("Cargando Datos.")
     cargar_datos(df_clean, output_path)
     cargar_datos_sqlite(df_clean, database_path, tabla)
+
     logger.info("Pipeline finalizado correctamente")
 
 except Exception as e:

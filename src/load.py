@@ -1,9 +1,8 @@
-from src.logger import configurar_logger
 import sqlite3
+from src.logger import retornar_logger
 
 
-logger = configurar_logger()
-
+logger = retornar_logger("load.py")
 
 def cargar_datos(df, path):
     """
